@@ -1,75 +1,60 @@
-# React + TypeScript + Vite
+# Advanced React E-Commerce App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React + TypeScript e-commerce application built around the FakeStoreAPI, featuring a product catalog with category filtering, a Redux-powered shopping cart with persistence, and a checkout flow.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Landing Page** — welcome screen with a "Shop Now" call to action
+- **Product Catalog** — fetches all products via React Query, displaying title, price, category, description, rating, and image for each
+- **Image Fallback** — broken FakeStoreAPI image URLs fall back to a placeholder image so the layout stays consistent
+- **Category Filtering** — a dynamically populated dropdown (pulled live from the API, not hardcoded) filters the catalog by category
+- **Shopping Cart** — powered by Redux Toolkit; add items from the catalog, view them in the cart with title, image, count, and price, and remove items individually
+- **Persistent Cart** — cart contents are saved to `sessionStorage`, so they survive page refreshes within the same browser session
+- **Live Totals** — total item count and total price update automatically as the cart changes
+- **Checkout** — simulates a purchase by clearing the Redux cart state and `sessionStorage`, with a success message shown to the user
+- **Nav Bar** — persistent navigation with a live cart item count badge
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React + TypeScript
+- Vite
+- Redux Toolkit + React Redux (cart state management)
+- TanStack React Query (data fetching)
+- React Router
+- React Bootstrap
+- Axios
+- [FakeStoreAPI](https://fakestoreapi.com/) (mock product data)
 
-## Expanding the ESLint configuration
+## Project Structure
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+src/
+├── api/
+│ └── products.ts # FakeStoreAPI calls (products, categories, category filter)
+├── app/
+│ └── store.ts # Redux store configuration
+├── features/
+│ └── cart/
+│ ├── cartSlice.ts # Redux Toolkit slice: add/remove/clear cart items
+│ └── Cart.tsx # Cart page UI
+├── components/
+│ ├── Landing.tsx # Home/welcome page
+│ ├── Home.tsx # Product catalog page
+│ ├── ProductCard.tsx # Individual product display + add-to-cart
+│ ├── CategoryFilter.tsx # Dynamic category dropdown
+│ └── NavBar.tsx # Top navigation with cart badge
+├── types/
+│ └── product.ts # Product and CartItem TypeScript interfaces
+├── App.tsx # Route definitions
+└── main.tsx # Redux Provider, React Query Provider, Router setup
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Architecture Notes
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- **Data fetching** is handled by React Query (`useQuery`), which manages loading/error states and caching for product and category data pulled from FakeStoreAPI.
+- **Cart state** lives entirely in Redux Toolkit (`cartSlice.ts`), exposing `addToCart`, `removeFromCart`, and `clearCart` actions. The store is the single source of truth shared across the Nav Bar, Cart page, and Product Catalog.
+- **Persistence** is handled manually inside the cart slice — cart changes are written to `sessionStorage` on every add/remove, and read back in on initial load, so a page refresh doesn't lose the cart.
+- **Routing** uses `react-router-dom` with three routes: `/` (landing), `/shop` (product catalog), and `/cart` (shopping cart).
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Known Limitations
 
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
-```
+- Checkout is simulated only — no real payment processing or order history (FakeStoreAPI doesn't support this)
+- Cart persists only for the browser session (`sessionStorage`, not `localStorage`) — it clears when the browser tab/session ends

@@ -11,8 +11,13 @@ export const NavBar = () => {
     <Navbar bg="dark" variant="dark" expand="lg">
       <Container>
         <Navbar.Brand as={Link} to="/">
-          Shop
+          CyberStore
         </Navbar.Brand>
+        <Nav className="me-auto">
+          <Nav.Link as={Link} to="/shop">
+            Items
+          </Nav.Link>
+        </Nav>
         <Nav>
           <Nav.Link as={Link} to="/cart">
             Cart <Badge bg="primary">{totalCount}</Badge>

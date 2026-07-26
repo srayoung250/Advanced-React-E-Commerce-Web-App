@@ -26,7 +26,7 @@ A React + TypeScript e-commerce application built around the FakeStoreAPI, featu
 - [FakeStoreAPI](https://fakestoreapi.com/) (mock product data)
 
 ## Project Structure
-
+```
 src/
 ├── api/
 │ └── products.ts # FakeStoreAPI calls (products, categories, category filter)
@@ -46,7 +46,7 @@ src/
 │ └── product.ts # Product and CartItem TypeScript interfaces
 ├── App.tsx # Route definitions
 └── main.tsx # Redux Provider, React Query Provider, Router setup
-
+```
 ## Architecture Notes
 
 - **Data fetching** is handled by React Query (`useQuery`), which manages loading/error states and caching for product and category data pulled from FakeStoreAPI.
